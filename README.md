@@ -1,6 +1,7 @@
 # RPGGAME_Attempt
 
 *New Update
+
 There are technical issues affecting the system. The player character successfully attacked the AI character, and once the AI character's health was reduced to a low level, it died. However, the health bar did not update correctly due to an issue. In the video I provided, you can observe the AI character's health decreasing.
 ********************
 
