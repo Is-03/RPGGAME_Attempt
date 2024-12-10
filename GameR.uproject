@@ -7,12 +7,7 @@
 		{
 			"Name": "GameR",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"UMG",
-				"Engine",
-				"AIModule"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
@@ -22,10 +17,6 @@
 			"TargetAllowList": [
 				"Editor"
 			]
-		},
-		{
-			"Name": "GameplayAbilities",
-			"Enabled": true
 		}
 	]
 }
