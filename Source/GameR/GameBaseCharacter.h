@@ -37,8 +37,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> AbilityToAcquires;
 
-	void TryActivateAbility(int AbilityIndex);
-
 	virtual void PossessedBy(AController* NewController) override;
 
 	void TryActiveFirstAbility();
@@ -47,9 +45,16 @@ public:
 	void TryActiveFourthAbility();
 	void TryActiveAbility(int AbilityIndex);
 
+	void TryActivateAbility(int AbilityIndex);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput") 
 	UInputMappingContext* InputMappingContext;
 
+
+
+	//damage
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void ApplyDamage(float DamageAmount);
 
 protected:
 
@@ -58,9 +63,18 @@ protected:
 private:
 	UPROPERTY()
 	class UWidgetComponent* WidgetComponent;
-	float const MaxHealth{ 100.f };
+	//float const MaxHealth{ 100.f };
+	//float Health;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 	float Health;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	float AttackDamage;
 
 
 };

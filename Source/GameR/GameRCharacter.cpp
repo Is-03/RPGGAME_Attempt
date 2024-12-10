@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "UObject/ConstructorHelpers.h"
+#include "GAnimNotify.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -62,6 +63,11 @@ AGameRCharacter::AGameRCharacter()
 
 }
 
+void AGameRCharacter::OnAttackNotify()
+{
+	CurrentState = ECharacterState::Idle;
+}
+
 void AGameRCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -70,6 +76,8 @@ void AGameRCharacter::BeginPlay()
 
 //////////////////////////////////////////////////////////////////////////
 // Input
+
+
 
 void AGameRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -85,7 +93,8 @@ void AGameRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AGameRCharacter::PerformAttack);
+
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
@@ -153,7 +162,13 @@ void AGameRCharacter::PerformAttack()
 		}
 		// Set the attacking state
 		CurrentState = ECharacterState::Attacking;
+
+		if (TargetCharacter)
+		{
+			TargetCharacter->ApplyDamage(AttackDamage);
+		}
 	}
+
 }
 
 bool AGameRCharacter::CanAttack() const

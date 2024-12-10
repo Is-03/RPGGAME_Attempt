@@ -13,6 +13,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class UAnimNotify;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -61,6 +62,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State") 
 	ECharacterState CurrentState;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+	AGameBaseCharacter* TargetCharacter;
+
+
+	UFUNCTION()
+	void OnAttackNotify();
 
 protected:
 

@@ -14,29 +14,33 @@
 #include "InputMappingContext.h"
 
 
-const float HealthBarZ = 100.0f;
+const float HealthBarZ = 1.0f;
 
-AGameBaseCharacter::AGameBaseCharacter():
-	AbilitySystemComponent{ CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem")) },
-	WidgetComponent{CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthValue"))},
-	Health{MaxHealth}
-
+AGameBaseCharacter::AGameBaseCharacter()
+	: AbilitySystemComponent{ CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem")) }
+	, WidgetComponent{ CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthValue")) }
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	MaxHealth = 1.0f;
+	Health = MaxHealth;
+	AttackDamage = 0.5f;
+
 	if (WidgetComponent)
 	{
 		WidgetComponent->SetupAttachment(RootComponent);
 		WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 		WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, HealthBarZ));
-		static ConstructorHelpers::FClassFinder<UUserWidget>WidgetClass{ TEXT("/Game/UI/HealthBar")};
+
+		static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClass{ TEXT("/Game/UI/HealthBar") };
 		if (WidgetClass.Succeeded())
 		{
-			WidgetComponent->SetWidgetClass((WidgetClass.Class));
+			WidgetComponent->SetWidgetClass(WidgetClass.Class);
 		}
 	}
-
-
 }
+
+
 
 void AGameBaseCharacter::TryActiveFirstAbility()
 {
@@ -56,6 +60,30 @@ void AGameBaseCharacter::TryActiveThirdAbility()
 void AGameBaseCharacter::TryActiveFourthAbility()
 {
 	TryActivateAbility(3);
+}
+
+//damage
+void AGameBaseCharacter::ApplyDamage(float DamageAmount)
+{
+	Health -= DamageAmount;
+	Health = FMath::Clamp(Health, 0.0f, MaxHealth);
+
+	UE_LOG(LogTemp, Warning, TEXT("Health after damage: %f"), Health);
+
+	// Update the health widget if applicable
+	if (UUserWidget* widget = Cast<UUserWidget>(WidgetComponent->GetUserWidgetObject()))
+	{
+		if (UHealthBarWidget* HealthWidget = Cast<UHealthBarWidget>(widget))
+		{
+			HealthWidget->SetBarValuePercent(Health / MaxHealth);
+		}
+	}
+
+	// Check for death
+	if (Health <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character has died"));
+	}
 }
 
 void AGameBaseCharacter::TryActivateAbility(int AbilityIndex)
@@ -102,7 +130,7 @@ void AGameBaseCharacter::Tick(float DeltaTime)
 	{
 		if (UHealthBarWidget* HealthWidget = Cast<UHealthBarWidget>(widget)) 
 		{ 
-			HealthWidget->SetBarValuePercent(Health / MaxHealth); 
+			HealthWidget->SetBarValuePercent(Health / MaxHealth);
 		}
 	}
 

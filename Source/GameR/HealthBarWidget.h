@@ -16,9 +16,12 @@ class GAMER_API UHealthBarWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeConstruct() override;
-	void SetBarValuePercent(float const value);
+    virtual void NativeConstruct() override;
+
+    UFUNCTION(BlueprintCallable, Category = "Health")
+    void SetBarValuePercent(float Value);
+
 private:
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess = "true"))
-	UProgressBar* HealthValue = nullptr;
+    UPROPERTY(meta = (BindWidget))
+    UProgressBar* HealthValue;
 };
